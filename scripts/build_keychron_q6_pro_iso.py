@@ -40,6 +40,11 @@ KC = {
     "MUTE": 168, "VOLU": 169, "VOLD": 170,
     "MNXT": 171, "MPRV": 172, "MSTP": 173, "MPLY": 174,
     "CALC": 178,
+    "RGB_TOG":  0x7820, "RGB_MOD":  0x7821, "RGB_RMOD": 0x7822,
+    "RGB_HUI":  0x7823, "RGB_HUD":  0x7824,
+    "RGB_SAI":  0x7825, "RGB_SAD":  0x7826,
+    "RGB_VAI":  0x7827, "RGB_VAD":  0x7828,
+    "RGB_SPI":  0x7829, "RGB_SPD":  0x782A,
 }
 
 def MO(n):  # momentary layer
@@ -144,8 +149,15 @@ L0_PATCH = [
 def S(kc): return 0x0200 | kc
 
 L2_PATCH = [
+    # RGB controls slotted into otherwise-empty (Unicode-only) Bone
+    # Mod3 positions. Keychron's stock convention is FN+Tab = toggle,
+    # FN+Q = next effect; we keep those. FN/Caps + ß picks up "prev"
+    # by landing on the ſ slot (Bone Mod3 has Unicode `ſ` there, which
+    # we can't type from German anyway).
+    (2, 0, KC["RGB_TOG"]),             # Caps/FN + Tab → RGB on/off
     # Row 2 (top letter row), Mod3 layer
-    (2, 1, KC["NO"]),                  # (unused in Bone Mod3 row 1)
+    (2, 1, KC["RGB_MOD"]),             # Caps/FN + Q → next RGB effect
+    (2, 2, S(KC["MINS"])),             # _ (Shift+ß on German)
     (2, 2, S(KC["MINS"])),             # _ (Shift+ß on German)
     (2, 3, RALT(KC["8"])),             # [ (AltGr+8)
     (2, 4, RALT(KC["9"])),             # ] (AltGr+9)
@@ -155,7 +167,8 @@ L2_PATCH = [
     (2, 8, S(KC["NUBS"])),             # > (Shift+<)
     (2, 9, S(KC["0"])),                # = (Shift+0)
     (2, 10, S(KC["6"])),               # & (Shift+6)
-    (2, 11, KC["NO"]),                 # ſ, Unicode, not available
+    (2, 11, KC["RGB_RMOD"]),           # Caps/FN + ß → previous RGB effect
+                                       #   (Bone Mod3 ſ slot, Unicode-only)
 
     # Row 3 (home row), Mod3 layer
     (3, 1, RALT(KC["MINS"])),          # \ (AltGr+ß)
