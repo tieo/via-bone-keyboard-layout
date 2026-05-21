@@ -100,8 +100,8 @@ L0_PATCH = [
     # Actually re-read: AB01..AB10 are the bottom letter keys including
     # the < on ISO. xkb's bone_base puts f on AB01 (ISO <). Conflicting
     # with Mod4. We resolve by putting Mod4 on ISO< (closer to thumb)
-    # and skipping f on AB01 — f instead goes on row 4 col 6 (was 'b'
-    # position B/N junction). Hmm — that's not how Bone works.
+    # and skipping f on AB01, f instead goes on row 4 col 6 (was 'b'
+    # position B/N junction). Hmm, that's not how Bone works.
     #
     # Reality check: on most non-ISO Bone setups, AB01 just doesn't
     # exist. The Bone letter sequence is f v ü ä ö y z , . k starting at
@@ -116,20 +116,15 @@ L0_PATCH = [
     (4, 8, KC["Y"]),        # z → KC_Y
     (4, 9, KC["COMM"]),     # ,
     (4, 10, KC["DOT"]),     # .
-    # AB10 = k goes where the German '-' lives — col 11 on row 4
+    # AB10 = k goes where the German '-' lives, col 11 on row 4
     (4, 11, KC["K"]),
     # ISO < → Mod4 trigger
     (4, 1, MO(3)),
     # Right Alt → Mod4 trigger
     (5, 10, MO(3)),
 
-    # Bottom-left modifier swap. Stock physical order is Ctrl/Win/Alt;
-    # this re-roles those three positions to fire Win/Alt/Ctrl, matching
-    # the xkb `ctrl:swap_lalt_lctl_lwin` option the user used in KDE.
-    # Doing it in firmware means it works on every host, not just Linux.
-    (5, 0, KC["LGUI"]),
-    (5, 1, KC["LALT"]),
-    (5, 2, KC["LCTL"]),
+    # (mod swap lives in L0_MOD_SWAP so it's not accidentally also
+    # applied to L2)
 ]
 
 # --- Layer 2 (Mod3 / punctuation) -----------------------------------------
@@ -149,7 +144,7 @@ L0_PATCH = [
 def S(kc): return 0x0200 | kc
 
 L2_PATCH = [
-    # Row 2 (top letter row) — Mod3 layer
+    # Row 2 (top letter row), Mod3 layer
     (2, 1, KC["NO"]),                  # (unused in Bone Mod3 row 1)
     (2, 2, S(KC["MINS"])),             # _ (Shift+ß on German)
     (2, 3, RALT(KC["8"])),             # [ (AltGr+8)
@@ -160,22 +155,22 @@ L2_PATCH = [
     (2, 8, S(KC["NUBS"])),             # > (Shift+<)
     (2, 9, S(KC["0"])),                # = (Shift+0)
     (2, 10, S(KC["6"])),               # & (Shift+6)
-    (2, 11, KC["NO"]),                 # ſ — Unicode, not available
+    (2, 11, KC["NO"]),                 # ſ, Unicode, not available
 
-    # Row 3 (home row) — Mod3 layer
+    # Row 3 (home row), Mod3 layer
     (3, 1, RALT(KC["MINS"])),          # \ (AltGr+ß)
     (3, 2, S(KC["7"])),                # / (Shift+7)
     (3, 3, RALT(KC["7"])),             # { (AltGr+7)
     (3, 4, RALT(KC["0"])),             # } (AltGr+0)
     (3, 5, S(KC["RBRC"])),             # * (Shift+ +)
-    (3, 6, S(KC["MINS"])),             # ?  — wait this should be (Shift+ß) for ? on German
+    (3, 6, S(KC["MINS"])),             # ? , wait this should be (Shift+ß) for ? on German
     (3, 7, S(KC["8"])),                # ( (Shift+8)
     (3, 8, S(KC["9"])),                # ) (Shift+9)
     (3, 9, KC["SLSH"]),                # - on German = KC_SLASH (- is at slash position)
     (3, 10, S(KC["DOT"])),             # : (Shift+.)
     (3, 11, RALT(KC["Q"])),            # @ (AltGr+Q)
 
-    # Row 4 (bottom letter row) — Mod3 layer
+    # Row 4 (bottom letter row), Mod3 layer
     (4, 2, KC["NUHS"]),                # # on German = KC_NUHS
     (4, 3, S(KC["4"])),                # $ on German = Shift+4
     (4, 4, RALT(KC["NUBS"])),          # | (AltGr+<)
@@ -254,7 +249,7 @@ def patch_layer(layer, patches):
         if (row, col) in by_key:
             by_key[(row, col)]["val"] = val
         else:
-            # position not present in original — skip silently rather than
+            # position not present in original, skip silently rather than
             # invent a new matrix slot
             sys.stderr.write(f"warn: no slot at row={row} col={col}\n")
     # preserve original order
@@ -267,16 +262,10 @@ def make_trns_layer(template_layer):
             for e in template_layer]
 
 
-# Common-to-both-base-layers patch. Stock Keychron Win base maps the
-# physical F-row to media/RGB shortcuts and reserves F1-F12 for the FN
-# layer; we've taken FN for Mod3 so put F1-F12 back on the F-row
-# directly. Plus the mod swap (Ctrl/Win/Alt → Win/Alt/Ctrl) and the
-# user's macro group remap (F13-F16 → prev/play/next/calculator).
+# Stuff applied to both base layers (Bone L0 and QWERTZ L2): F-row
+# direct (Keychron stock hides F1-F12 behind FN; we want them direct
+# since FN is now Mod3) and the macro group remap.
 BASE_COMMON_PATCH = [
-    # bottom-left mod swap
-    (5, 0, KC["LGUI"]),
-    (5, 1, KC["LALT"]),
-    (5, 2, KC["LCTL"]),
     # F-row direct (no FN required)
     (0, 1, KC["F1"]),   (0, 2, KC["F2"]),   (0, 3, KC["F3"]),
     (0, 4, KC["F4"]),   (0, 5, KC["F5"]),   (0, 6, KC["F6"]),
@@ -287,6 +276,16 @@ BASE_COMMON_PATCH = [
     (0, 18, KC["MPLY"]),  # play/pause
     (0, 19, KC["MNXT"]),  # next
     (0, 20, KC["CALC"]),  # calculator
+]
+
+# L0-only mod swap (Ctrl/Win/Alt → Win/Alt/Ctrl). NOT applied to L2:
+# on Linux the keyboard sits in Mac/QWERTZ switch position and xkb's
+# ctrl:swap_lalt_lctl_lwin handles the swap. If L2 also swapped, the
+# two rotations would compose into Alt/Ctrl/Win, which is wrong.
+L0_MOD_SWAP = [
+    (5, 0, KC["LGUI"]),
+    (5, 1, KC["LALT"]),
+    (5, 2, KC["LCTL"]),
 ]
 
 
@@ -301,7 +300,7 @@ def main(template_path, out_path):
     # Apply F-row / mod-swap / macro-group changes to a shared base
     # first, so L0 (Bone) and L2 (QWERTZ) both inherit them.
     common_base = patch_layer(layers[0], BASE_COMMON_PATCH)
-    # L2 = QWERTZ base. Inherits common_base verbatim — letters stay
+    # L2 = QWERTZ base. Inherits common_base verbatim, letters stay
     # QWERTZ since BONE_PATCH only applies to L0.
     layers[2] = [dict(e) for e in common_base]
     # L1 = Bone Mod3 and L3 = Bone Mod4. Both start fully transparent so
@@ -309,8 +308,8 @@ def main(template_path, out_path):
     layers[1] = make_trns_layer(layers[1])
     layers[3] = make_trns_layer(layers[3])
 
-    layers[0] = patch_layer(common_base, L0_PATCH)
-    layers[1] = patch_layer(layers[1], L2_PATCH)  # Mod3 patches → L1
+    layers[0] = patch_layer(common_base, L0_PATCH + L0_MOD_SWAP)
+    layers[1] = patch_layer(layers[1], L2_PATCH)  # Mod3 patches go on L1
     layers[3] = patch_layer(layers[3], L3_PATCH)
 
     # Recompute MD5 of the keymap structure (Keychron's checksum)
