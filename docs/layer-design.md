@@ -1,23 +1,39 @@
 # Layer design
 
-Canonical source: <https://neo-layout.org/Layouts/bone/>. This document is a
-working reference for what each VIA keymap should produce. If it disagrees
-with neo-layout.org, neo-layout.org wins — open an issue.
+Canonical source: <https://neo-layout.org/Layouts/bone/>. This document
+is a working reference for what the Keychron Q6 Pro keymap in this repo
+produces. If it disagrees with neo-layout.org, neo-layout.org wins; open
+an issue.
 
 ## Assumed host OS layout
 
 **German (QWERTZ), default variant.** Every keycode below is the HID
 keycode whose label, *on a QWERTZ keyboard*, produces the target Bone
-character. Examples: Bone "ü" → send `KC_LBRC` (the key labelled `ü` on a
-QWERTZ board). Bone "ß" → send `KC_MINS` (the key labelled `ß`).
+character. Examples: Bone "ü" sends `KC_LBRC` (the key labelled `ü` on
+a QWERTZ board). Bone "ß" sends `KC_MINS` (the key labelled `ß`).
 
-If the host OS is anything other than plain QWERTZ, this won't work. See
-the README.
+If the host OS is anything other than plain QWERTZ, the firmware Bone
+keymap will produce the wrong characters. See the README.
 
-## L0 — Bone base
+## Layer assignment in the Keychron Q6 Pro keymap
 
-Letter block (the only thing Bone changes relative to QWERTZ — number row,
-modifiers, function row, etc. stay as the board's QWERTZ default):
+The Q6 Pro firmware has 4 layer slots and we use all of them:
+
+| Slot | Contents | Activated by |
+|---|---|---|
+| L0 | Bone base | default with back toggle on Win side |
+| L1 | Bone Mod3 (punctuation, brackets, AltGr-combo symbols) | hold Caps Lock, ISO `#`, or the FN1 key |
+| L2 | Plain QWERTZ base | default with back toggle on Mac side |
+| L3 | Bone Mod4 (nav cluster + numpad) | hold ISO `<` or Right Alt |
+
+The Mac/Win back toggle picks between the two base layers. Mod3 and
+Mod4 are momentary; the rest of those layers is transparent and falls
+through to whichever base layer is active.
+
+## L0, Bone base
+
+Letter block (the only thing Bone changes relative to QWERTZ; number
+row, modifiers, function row stay as QWERTZ):
 
 ```
 top:    j  d  u  a  x   p  h  l  m  w  ß
@@ -25,63 +41,93 @@ home:   c  t  i  e  o   b  n  r  s  g
 bottom: f  v  ü  ä  ö   y  z  ,  .  k
 ```
 
-ISO note: the extra key left of `Y` on ISO boards is **not part of Bone's
-letter block**. Suggested mapping: leave it as the QWERTZ default (`<>|`),
-or map to a Mod3/Mod4 layer key — your call.
+Y/Z swap (xkb's AB06=y AB07=z) is handled by sending `KC_Z` for `y` and
+`KC_Y` for `z`, since the German OS layout already swaps the two
+positions relative to ANSI.
 
-## L1 — Shift (implicit)
+ISO note: the extra key left of `Y` (`<>|` on QWERTZ) is reused as the
+Mod4 trigger.
 
-Holding Shift produces the capital of each L0 letter plus the shifted
-symbols on the number row. No remapping needed — the OS handles this from
-L0.
+## Bone Shift layer (no remap needed)
 
-Note: Bone places **uppercase ẞ** (capital eszett) on Shift+ß. QWERTZ
-already does this from Linux ~2017+, so it works for free.
+Holding Shift produces the capital of each L0 letter via the OS
+keymap. No firmware work. Capital ẞ on Shift+ß has been in mainline
+xkb / Windows since ~2017.
 
-## L2 — Mod3
+Bone's "Level 2" symbols on the number row (`° § ℓ » « $ € „ " …`) are
+**not** implemented in this firmware keymap. Most are Unicode-only and
+the ASCII-reachable ones (`° § $ €` via their German positions, e.g.
+Shift+`^` for °) would need mod-morph, which stock VIA / Keychron
+firmware doesn't expose. Use xkb's `de(bone)` on Linux to get them.
 
-Activated by holding the Mod3 key (typically the Caps Lock position, and
-the `#` key right of `ä` on ISO).
+## L1, Bone Mod3
 
-Contains common punctuation and brackets. Layout (same physical grid as
-L0):
+Activated by holding Caps Lock or ISO `#` (xkb's `bksl_switch`
+position). Also bound to the keyboard's FN1 key so the stock Keychron
+`FN + ...` muscle memory still works.
+
+Bone Mod3, on a German QWERTZ host:
 
 ```
-top:    .  _  [  ]  ^   !  <  >  =  &  ſ
+top:    .  _  [  ]  ^   !  <  >  =  &  .
 home:   \  /  {  }  *   ?  (  )  -  :  @
-bottom: #  $  |  ~  `   +  %  "  '  ;
+bottom: #  $  |  ~  .   +  %  "  '  ;
 ```
 
-Most of these are direct QWERTZ-shifted symbols or AltGr combos. Mapping
-table: see [`mod3-keycodes.md`](./mod3-keycodes.md) (TODO).
+The dots are placeholders for Unicode-only Bone symbols (`° ̄ ſ ` `)
+that can't be reached from a plain German layout. The slots are either
+`KC_NO` or, where convenient, repurposed for hardware controls
+(see below).
 
-## L3 — Mod4
+The mapping table in `scripts/build_keychron_q6_pro_iso.py` is the
+source of truth for which German keystroke produces each symbol
+(e.g. `[` = AltGr+8 = `RALT(KC_8)`).
 
-Activated by holding the Mod4 key (typically the right-Alt position).
+### Hardware controls slotted into Mod3's Unicode-only positions
 
-Navigation cluster on the left half, numpad on the right:
+Bone's Mod3 leaves a handful of positions filled with characters that
+need Unicode input. Those slots are repurposed here:
+
+- Mod3 + Tab = `RGB_TOG` (matches Keychron's stock FN+Tab)
+- Mod3 + Q = `RGB_MOD` (next backlight effect; matches FN+Q)
+- Mod3 + ß = `RGB_RMOD` (previous backlight effect; uses Bone's `ſ` slot)
+
+## L2, plain QWERTZ base
+
+Standard German QWERTZ. The same F-row direct binding and macro-group
+remap as L0 (Prev / Play-Pause / Next / Calculator on the four
+rightmost F-row keys) but **no** modifier swap on the bottom-left
+cluster. On Linux the user runs xkb's `de(bone)` and
+`ctrl:swap_lalt_lctl_lwin` against this base layer; if L2 also swapped,
+the two rotations would compose into the wrong order
+(Alt/Ctrl/Win instead of Win/Alt/Ctrl).
+
+## L3, Bone Mod4
+
+Activated by holding ISO `<` or Right Alt. Navigation cluster on the
+left, numpad on the right:
 
 ```
-top:    PgUp BkSp  Up  Del PgDn   ¡   7  8  9  +  −
-home:   Home Left Down Right End  ¿   4  5  6  ,  .
-bottom: Esc  Tab  Ins  Ent Undo   :   1  2  3  ;
+top:    PgUp BkSp  Up   Del  PgDn  .  7  8  9  +  .
+home:   Home Left  Down Right End  .  4  5  6  ,  .
+bottom: Esc  Tab   Ins  Enter Undo .  1  2  3  .  .
+                                            0
 ```
 
-Plus `0` typically on a Mod4-modified space or similar — check
-neo-layout.org for the exact spec.
+Dots are unmapped (Bone's reference has Unicode-only or rarely-used
+symbols there; left as `KC_TRNS` so they fall through to the base
+layer).
 
-Most entries are standard HID nav/keypad codes. `¡`/`¿`/`−` need AltGr
-combos on QWERTZ; document the exact sequence per board.
+## Layers 5-6 (Greek / math): out of scope
 
-## L4 and L5 (out of scope)
+Bone layers 5 and 6 (`α β → ⇒ √ ∫ ° ∞ ≠ ≤` …) are Unicode-only and
+unreachable from a plain German OS layout. Stock VIA / Keychron
+firmware can't send arbitrary Unicode without macros tied to a
+specific input method (`Ctrl+Shift+U` on Linux+IBus, `Alt+numpad` on
+Windows, Option-dead-keys on macOS), which defeats the "Bone follows
+the keyboard everywhere" goal.
 
-Layers 5 and 6 of Bone contain Greek letters and math symbols (`α β → ⇒ √
-∫ ° ∞ ≠ ≤` etc). These are Unicode characters with no QWERTZ keycode, so
-VIA can't reach them without custom firmware that knows `UC()`. If you
-need them, either:
-
-- Use xkb's `de(bone)` instead of this repo, or
-- Build custom QMK with Unicode keycodes and replace the relevant L2/L3
-  slots with `UC(0x03B1)` etc.
-
-Out of scope here.
+On Linux you can layer xkb's `de(bone)` on top instead and get all 6
+layers natively. The Mac/Win back toggle is wired so you flip the
+keyboard to Mac (= L2 plain QWERTZ) when typing on Linux, and back to
+Win (= L0 Bone) for everything else.
