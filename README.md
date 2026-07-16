@@ -39,8 +39,8 @@ if you want them off.
 
 ## Requirements
 
-- A VIA-compatible keyboard. Two ready-made keymaps for the **Keychron Q6
-  Pro ISO Knob**:
+- A VIA-compatible keyboard. Ready-made keymaps for the **Keychron Q6 Pro
+  ISO Knob**:
   - [`keymaps/keychron-q6-pro-iso.json`](./keymaps/keychron-q6-pro-iso.json)
     Bone (with all the layer reshuffling described above).
   - [`keymaps/keychron-q6-pro-iso-qwertz.json`](./keymaps/keychron-q6-pro-iso-qwertz.json)
@@ -51,6 +51,14 @@ if you want them off.
     `XF86Launch5/6/7`; KDE's media bindings expect
     `XF86AudioPrev/Play/Next`, so the keys silently do nothing on Linux
     until you remap them.
+
+  And for the **Keychron Q6 Ultra 8K ISO Knob**:
+  - [`keymaps/keychron-q6-ultra-8k-iso-qwertz.json`](./keymaps/keychron-q6-ultra-8k-iso-qwertz.json)
+    QWERTZ on the Win layer (L2) with the F-row sending `F1..F12` directly
+    and the macro group remapped off `KC_F13..F16` to `Calculator /
+    WWW-Back / Play-Pause / Next`, for the same reason as the Q6 Pro
+    QWERTZ keymap above. The Mac layer (L0) is left at Keychron stock.
+    No Bone keymap for this board yet.
 - Host OS keyboard layout set to **plain German (QWERTZ)**, *not*
   `de(bone)`. The firmware handles Bone; let the OS do plain German.
 - A VIA-style configurator:
