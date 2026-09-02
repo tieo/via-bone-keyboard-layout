@@ -33,7 +33,7 @@ if you want them off.
 - **F-row direct.** F1-F12 are on the F-row without holding FN. (Keychron's
   stock keymap hides them behind FN and puts media keys on the F-row.)
 - **Macro group remap.** The four rightmost F-row keys (F13-F16 stock) are
-  Prev Track / Play-Pause / Next Track / Calculator.
+  Calculator / Prev Track / Play-Pause / Next Track.
 - **OS switch repurposed.** The back-left Mac/Win toggle now flips between
   Bone (L0) and plain QWERTZ (L2) instead of Mac/Win modifier layout.
 
@@ -46,7 +46,7 @@ if you want them off.
   - [`keymaps/keychron-q6-pro-iso-qwertz.json`](./keymaps/keychron-q6-pro-iso-qwertz.json)
     Stock Keychron QWERTZ with the only change being the four rightmost
     F-row keys remapped from `KC_F13..F16` to real media keycodes
-    (Prev / Play-Pause / Next / Calculator). Stock Keychron firmware
+    (Calculator / Prev / Play-Pause / Next). Stock Keychron firmware
     sends `F13..F16` there, which the Linux kernel reports as
     `XF86Launch5/6/7`; KDE's media bindings expect
     `XF86AudioPrev/Play/Next`, so the keys silently do nothing on Linux

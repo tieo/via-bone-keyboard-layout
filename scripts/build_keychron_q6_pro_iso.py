@@ -285,10 +285,10 @@ BASE_COMMON_PATCH = [
     (0, 7, KC["F7"]),   (0, 8, KC["F8"]),   (0, 9, KC["F9"]),
     (0, 10, KC["F10"]), (0, 11, KC["F11"]), (0, 12, KC["F12"]),
     # right-side macro group (was F13-F16)
-    (0, 17, KC["MPRV"]),  # back
-    (0, 18, KC["MPLY"]),  # play/pause
-    (0, 19, KC["MNXT"]),  # next
-    (0, 20, KC["CALC"]),  # calculator
+    (0, 17, KC["CALC"]),  # calculator
+    (0, 18, KC["MPRV"]),  # back
+    (0, 19, KC["MPLY"]),  # play/pause
+    (0, 20, KC["MNXT"]),  # next
 ]
 
 # L0-only mod swap (Ctrl/Win/Alt → Win/Alt/Ctrl). NOT applied to L2:

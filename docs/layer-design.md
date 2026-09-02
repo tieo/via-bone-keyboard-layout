@@ -95,7 +95,7 @@ need Unicode input. Those slots are repurposed here:
 ## L2, plain QWERTZ base
 
 Standard German QWERTZ. The same F-row direct binding and macro-group
-remap as L0 (Prev / Play-Pause / Next / Calculator on the four
+remap as L0 (Calculator / Prev / Play-Pause / Next on the four
 rightmost F-row keys) but **no** modifier swap on the bottom-left
 cluster. On Linux the user runs xkb's `de(bone)` and
 `ctrl:swap_lalt_lctl_lwin` against this base layer; if L2 also swapped,

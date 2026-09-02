@@ -21,10 +21,10 @@ KC_CALC = 178   # KC_CALCULATOR
 # Stock has KC_F13..F16 at row 0 cols 17..20. Patch the base layers
 # (L0 Win, L2 Mac) so the keys actually do media on every host.
 PATCH = [
-    (0, 17, KC_MPRV),
-    (0, 18, KC_MPLY),
-    (0, 19, KC_MNXT),
-    (0, 20, KC_CALC),
+    (0, 17, KC_CALC),
+    (0, 18, KC_MPRV),
+    (0, 19, KC_MPLY),
+    (0, 20, KC_MNXT),
 ]
 BASE_LAYERS = (0, 2)
 
