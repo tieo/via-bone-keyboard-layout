@@ -57,9 +57,10 @@ if you want them off.
     QWERTZ on the Win layer (L2) with the F-row sending `F1..F12` directly
     and the macro group remapped off `KC_F13..F16` to `Calculator / Prev /
     Play-Pause / Next`, for the same reason as the Q6 Pro QWERTZ keymap
-    above. The two keys right of Print Screen send `LGUI(KC_L)` (Win+L,
-    lock screen) and `RGB_TOG` (RGB on/off) in place of the
-    Keychron-specific `QK_KB_25` and the `RGB_MOD` effect cycle. The Mac
+    above. The two keys right of Print Screen send `RGB_TOG` (RGB on/off)
+    and `LGUI(KC_L)` (Win+L, lock screen) in place of the Keychron-specific
+    `QK_KB_25` and the `RGB_MOD` effect cycle; the lock sits one key further
+    away so a missed Print Screen does not lock the session. The Mac
     layer (L0) is left at Keychron stock. No Bone keymap for this board
     yet.
 - Host OS keyboard layout set to **plain German (QWERTZ)**, *not*
@@ -69,6 +70,8 @@ if you want them off.
     (Chrome / Edge / Brave, WebHID required).
   - **Other VIA boards**: [usevia.app](https://usevia.app) or the standalone
     VIA desktop app.
+  - Or none: [`scripts/via_keymap.py`](./scripts/via_keymap.py), see
+    *Apply from the command line* below.
 
 ## Install (Keychron Q6 Pro ISO)
 
@@ -84,6 +87,25 @@ if you want them off.
 If the import fails with "Invalid Configuration", the JSON format may have
 drifted relative to your firmware version. Export your current keymap from
 the launcher and regenerate (see *Adding a board* below).
+
+### Apply from the command line
+
+[`scripts/via_keymap.py`](./scripts/via_keymap.py) writes a keymap JSON
+from this repo straight to the keyboard over USB, no browser needed. It
+needs only Python 3.8+ and works on Windows and Linux (on Linux with the
+udev rule below).
+
+```
+python3 scripts/via_keymap.py diff  keymaps/keychron-q6-ultra-8k-iso-qwertz.json
+python3 scripts/via_keymap.py apply keymaps/keychron-q6-ultra-8k-iso-qwertz.json
+```
+
+`diff` lists every key where the keyboard differs from the file, `apply`
+writes those keys and reads each one back (`-n` shows them without
+writing). `get <layer> <row> <col>` and `set <layer> <row> <col> <keycode>`
+handle a single key. The keys are stored on the keyboard like a Launcher
+import; knob assignments are left as they are. With more than one VIA
+keyboard plugged in, pick one with `--pid`.
 
 ### Linux side notes
 
